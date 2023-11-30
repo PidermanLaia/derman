@@ -1,0 +1,65 @@
+#include<stdlib.h>
+#include<GL/glut.h>
+ 
+int w= 480;  
+int h= 480; 
+int z=-150;
+int sudut=45;
+int sumbux,sumbuy,sumbuz;
+
+void wirecone (void){
+	glColor3f(1,0.5,1);glLineWidth(2);
+	glutWireCone(40.,80,40,20);
+}
+void renderScene(){
+	glClearColor(1,1,1,1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glTranslatef(0,0,z);
+	glRotatef(sudut,sumbux,sumbuy,sumbuz);
+	wirecone();
+	glutSwapBuffers();
+}
+void resize (int w1, int h1){
+	glViewport(0,0,w1,h1);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0, (float) w1/(float) h1,1.0, 1300.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
+void init(){
+	glClearColor(0,0,0,1);
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0, (float) w/(float) h,1.0, 300.0);
+	glMatrixMode(GL_MODELVIEW);
+}
+void myKeyboard(unsigned char key, int x, int y){
+	if(key=='a')z+=2;
+	else if (key=='s')z-=2;
+	else if (key=='x') {sudut +=2; sumbux=1; sumbuy=0; sumbuz=0;}	
+	else if (key=='y') {sudut +=2; sumbux=0; sumbuy=1; sumbuz=0;}
+	else if (key=='z') {sudut +=2; sumbux=0; sumbuy=0; sumbuz=1;}
+}
+void update (int volue){
+	glutPostRedisplay();
+	glutTimerFunc(50, update, 0);
+}
+
+int main(int argc, char **argv){
+	glutInit(&argc,argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
+	glutInitWindowPosition(100,100);
+	glutInitWindowSize(480,480);
+	glutCreateWindow("Piderman Laia|Objek 3D");
+	gluOrtho2D(-320.,320.,-320.,320.);
+	glutTimerFunc(50,update,0);	
+	glutDisplayFunc(renderScene);
+	glutKeyboardFunc(myKeyboard);
+	glutReshapeFunc(resize);
+	init();
+	glutMainLoop();
+ }   
